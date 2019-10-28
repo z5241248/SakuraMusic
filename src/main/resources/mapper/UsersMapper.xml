@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.IUserDao" >
+  <resultMap id="BaseResultMap" type="com.entity.Users" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="likealbum" property="likealbum" jdbcType="VARCHAR" />
+    <result column="likemusic" property="likemusic" jdbcType="VARCHAR" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <result column="seal" property="seal" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, password, username, type, likealbum, likemusic, image , seal , phone
+  </sql>
+
+<!--    根据手机号查询用户-->
+    <select id="selectByPhone" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT * FROM users
+        WHERE phone=#{phone,jdbcType=VARCHAR}
+    </select>
+
+  <select id="login" resultMap="BaseResultMap" parameterType="com.entity.Users" >
+      SELECT * FROM users
+      WHERE name=#{name,jdbcType=VARCHAR} AND  password=#{password,jdbcType=VARCHAR}
+  </select>
+
+  <insert id="insertUser" parameterType="com.entity.Users" >
+      insert into users (id, `name`, password,
+      username, type, image,phone)
+      values (DEFAULT , #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+      #{username,jdbcType=VARCHAR}, DEFAULT ,  DEFAULT , #{phone,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectUserByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+      SELECT * FROM users WHERE `name` = #{name,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectName" resultType="java.lang.Integer" parameterType="java.lang.String">
+      SELECT COUNT(*) FROM users WHERE `name` = #{name,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+      select *
+      from users
+      where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByIdAndSealtime" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select * from users u
+      where username = #{username,jdbcType=VARCHAR}
+  </select>
+
+    <select id="selectBySeal" resultMap="BaseResultMap">
+        SELECT * FROM users WHERE seal=1
+    </select>
+
+  <update id="updateLikeCount" parameterType="java.util.Map">
+      UPDATE users SET likemusic =
+      (
+        CASE
+            WHEN likemusic = "" THEN CONCAT(likemusic,#{likemusic,jdbcType=VARCHAR})
+            WHEN likemusic !="" THEN CONCAT(likemusic, ';' ,#{likemusic,jdbcType=VARCHAR})
+        END
+      )
+      WHERE `name` = #{name,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateUser" parameterType="java.util.Map">
+      update users
+      <set>
+          <if test="password != null" >
+              password = #{password,jdbcType=VARCHAR},
+          </if>
+          <if test="username != null" >
+              username = #{username,jdbcType=VARCHAR},
+          </if>
+          <if test="image != null" >
+              image = #{image,jdbcType=VARCHAR},
+          </if>
+          <if test="seal != null" >
+              seal = #{seal,jdbcType=VARCHAR},
+          </if>
+          <if test="phone != null" >
+              phone = #{phone,jdbcType=VARCHAR}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+    <update id="reduceLikeCount" parameterType="java.util.Map">
+      UPDATE users
+      SET likemusic = #{likemusic,jdbcType=VARCHAR}
+      WHERE
+      `name` = #{name,jdbcType=VARCHAR}
+  </update>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from users
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    
+  <insert id="insert" parameterType="com.entity.Users" >
+    insert into users (id, name, password, 
+      username, type, likealbum, 
+      likemusic, image)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{username,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{likealbum,jdbcType=VARCHAR}, 
+      #{likemusic,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.entity.Users" >
+    insert into users
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="likealbum != null" >
+        likealbum,
+      </if>
+      <if test="likemusic != null" >
+        likemusic,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="likealbum != null" >
+        #{likealbum,jdbcType=VARCHAR},
+      </if>
+      <if test="likemusic != null" >
+        #{likemusic,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.entity.Users" >
+    update users
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="likealbum != null" >
+        likealbum = #{likealbum,jdbcType=VARCHAR},
+      </if>
+      <if test="likemusic != null" >
+        likemusic = #{likemusic,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null" >
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.entity.Users" >
+    update users
+    set name = #{name,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      likealbum = #{likealbum,jdbcType=VARCHAR},
+      likemusic = #{likemusic,jdbcType=VARCHAR},
+      image = #{image,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

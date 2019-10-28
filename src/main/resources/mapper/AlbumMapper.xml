@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.IAlbumDao" >
+  <resultMap id="BaseResultMap" type="com.entity.Album" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="singer" property="singer" jdbcType="INTEGER" />
+    <result column="all" property="all" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="VARCHAR" />
+    <result column="likecount" property="likecount" jdbcType="INTEGER" />
+    <result column="sharecount" property="sharecount" jdbcType="INTEGER" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, singer, all, date, likecount, sharecount, image
+  </sql>
+
+  <select id="selectMaxByAlbumLikecount" resultMap="BaseResultMap" >
+      SELECT * FROM album ORDER BY likecount DESC LIMIT 4
+  </select>
+
+  <select id="selectAlbumByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select *
+      from album
+      where name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+  </select>
+
+  <select id="selectMusicByAlbum" resultType="String" parameterType="java.lang.String">
+      SELECT `all` FROM album WHERE `name` =  #{name,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+      select *
+      from album
+      where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAlbumInfo" resultType="java.lang.String" parameterType="java.lang.String" >
+      SELECT album FROM singer WHERE `name` = #{name,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from album
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.entity.Album" >
+    insert into album (id, name, singer, 
+      all, date, likecount, 
+      sharecount, image)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{singer,jdbcType=INTEGER}, 
+      #{all,jdbcType=VARCHAR}, #{date,jdbcType=VARCHAR}, #{likecount,jdbcType=INTEGER}, 
+      #{sharecount,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.entity.Album" >
+    insert into album
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="singer != null" >
+        singer,
+      </if>
+      <if test="all != null" >
+        all,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+      <if test="likecount != null" >
+        likecount,
+      </if>
+      <if test="sharecount != null" >
+        sharecount,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="singer != null" >
+        #{singer,jdbcType=INTEGER},
+      </if>
+      <if test="all != null" >
+        #{all,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="likecount != null" >
+        #{likecount,jdbcType=INTEGER},
+      </if>
+      <if test="sharecount != null" >
+        #{sharecount,jdbcType=INTEGER},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.entity.Album" >
+    update album
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="singer != null" >
+        singer = #{singer,jdbcType=INTEGER},
+      </if>
+      <if test="all != null" >
+        all = #{all,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="likecount != null" >
+        likecount = #{likecount,jdbcType=INTEGER},
+      </if>
+      <if test="sharecount != null" >
+        sharecount = #{sharecount,jdbcType=INTEGER},
+      </if>
+      <if test="image != null" >
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.entity.Album" >
+    update album
+    set name = #{name,jdbcType=VARCHAR},
+      singer = #{singer,jdbcType=INTEGER},
+      all = #{all,jdbcType=VARCHAR},
+      date = #{date,jdbcType=VARCHAR},
+      likecount = #{likecount,jdbcType=INTEGER},
+      sharecount = #{sharecount,jdbcType=INTEGER},
+      image = #{image,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

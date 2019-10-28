@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.IMusicDao" >
+  <resultMap id="BaseResultMap" type="com.entity.Music" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="singer" property="singer" jdbcType="INTEGER" />
+    <result column="album" property="album" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="likecount" property="likecount" jdbcType="INTEGER" />
+    <result column="sharecount" property="sharecount" jdbcType="INTEGER" />
+    <result column="musicaddress" property="musicaddress" jdbcType="VARCHAR" />
+    <result column="lrcaddress" property="lrcaddress" jdbcType="VARCHAR" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <association property="singerss" javaType="com.entity.Singer">
+        <result column="sname" property="name" jdbcType="VARCHAR"></result>
+    </association>
+    <association property="albumss" javaType="com.entity.Album">
+        <result column="aname" property="name" jdbcType="VARCHAR"></result>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, singer, album, type, likecount, sharecount, musicaddress, lrcaddress, image
+  </sql>
+
+  <select id="selectRandMusic" resultMap="BaseResultMap">
+      SELECT * FROM music ORDER BY RAND() LIMIT 4
+  </select>
+
+  <select id="selectMaxByMusicLikecount" resultMap="BaseResultMap" >
+      SELECT * FROM music ORDER BY likecount DESC LIMIT 4
+  </select>
+
+  <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      SELECT * FROM music
+      WHERE `name` LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      ORDER BY likecount DESC,sharecount DESC
+  </select>
+
+  <select id="selectMusicByNameAndSinger" resultMap="BaseResultMap" parameterType="java.util.Map">
+      SELECT * FROM music
+      WHERE
+      singer = #{singer,jdbcType=INTEGER}
+      AND
+      `name` = #{name,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByMusicTypeId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      SELECT * FROM music WHERE `type` =  #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="favoriteMusic" resultMap="BaseResultMap" parameterType="java.lang.String">
+      SELECT * FROM music
+      WHERE
+      `name` = #{name,jdbcType=VARCHAR} ORDER BY likecount LIMIT 0,1
+  </select>
+
+
+  <select id="searchPlay" resultMap="BaseResultMap" parameterType="java.util.Map">
+      SELECT * FROM music
+      WHERE
+      `name` = #{name,jdbcType=VARCHAR} AND singer = #{singer,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from music
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    
+  <update id="updateCount">
+      UPDATE music SET likecount = likecount + 1 WHERE `name` = #{name} AND singer = #{id}
+  </update>
+
+  <update id="reduceCount">
+      UPDATE music SET likecount = likecount - 1 WHERE `name` = #{name} AND singer = #{id}
+  </update>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from music
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.entity.Music" >
+    insert into music (id, name, singer, 
+      album, type, likecount, 
+      sharecount, musicaddress, lrcaddress, 
+      comment)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{singer,jdbcType=INTEGER}, 
+      #{album,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{likecount,jdbcType=INTEGER}, 
+      #{sharecount,jdbcType=INTEGER}, #{musicaddress,jdbcType=VARCHAR}, #{lrcaddress,jdbcType=VARCHAR}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.entity.Music" >
+    insert into music
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="singer != null" >
+        singer,
+      </if>
+      <if test="album != null" >
+        album,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="likecount != null" >
+        likecount,
+      </if>
+      <if test="sharecount != null" >
+        sharecount,
+      </if>
+      <if test="musicaddress != null" >
+        musicaddress,
+      </if>
+      <if test="lrcaddress != null" >
+        lrcaddress,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="singer != null" >
+        #{singer,jdbcType=INTEGER},
+      </if>
+      <if test="album != null" >
+        #{album,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="likecount != null" >
+        #{likecount,jdbcType=INTEGER},
+      </if>
+      <if test="sharecount != null" >
+        #{sharecount,jdbcType=INTEGER},
+      </if>
+      <if test="musicaddress != null" >
+        #{musicaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="lrcaddress != null" >
+        #{lrcaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.entity.Music" >
+    update music
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="singer != null" >
+        singer = #{singer,jdbcType=INTEGER},
+      </if>
+      <if test="album != null" >
+        album = #{album,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="likecount != null" >
+        likecount = #{likecount,jdbcType=INTEGER},
+      </if>
+      <if test="sharecount != null" >
+        sharecount = #{sharecount,jdbcType=INTEGER},
+      </if>
+      <if test="musicaddress != null" >
+        musicaddress = #{musicaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="lrcaddress != null" >
+        lrcaddress = #{lrcaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+<!--  <update id="updateByPrimaryKey" parameterType="com.entity.Music" >-->
+<!--    update music-->
+<!--    set name = #{name,jdbcType=VARCHAR},-->
+<!--      singer = #{singer,jdbcType=INTEGER},-->
+<!--      album = #{album,jdbcType=INTEGER},-->
+<!--      type = #{type,jdbcType=INTEGER},-->
+<!--      likecount = #{likecount,jdbcType=INTEGER},-->
+<!--      sharecount = #{sharecount,jdbcType=INTEGER},-->
+<!--      musicaddress = #{musicaddress,jdbcType=VARCHAR},-->
+<!--      lrcaddress = #{lrcaddress,jdbcType=VARCHAR},-->
+<!--      comment = #{comment,jdbcType=VARCHAR}-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </update>-->
+
+
+<!--    管理员-->
+  <select id="selectMusicByNameAndSingerOfpage" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT m.*,s.name as sname,a.name as aname FROM music m
+        JOIN singer s ON m.`singer` = s.`id`
+        JOIN album a ON m.`album` = a.`id`
+        where 1=1
+        <if test="name!=null and name!=''">
+            and m.`name` LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+        </if>
+        limit #{pages,jdbcType=INTEGER},#{max,jdbcType=INTEGER}
+
+  </select>
+
+  <select id="selectCount" resultType="Integer" parameterType="java.util.Map">
+        select COUNT(m.`id`) from music m JOIN singer s ON m.`singer` = s.`id`
+        where 1=1
+        <if test="name!=null and name!=''">
+            and m.`name` LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+        </if>
+  </select>
+
+  <delete id="musicdelete" parameterType="java.lang.Integer">
+      delete from music
+      where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <update id="updateByPrimaryKey" parameterType="java.util.Map" >
+    update music
+    set name = #{name,jdbcType=VARCHAR},
+    type = #{type,jdbcType=INTEGER},
+    singer = #{singer,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByHeadPhoto" parameterType="java.util.Map" >
+    update music
+    set image = #{image,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

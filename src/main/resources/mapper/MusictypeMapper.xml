@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.IMusicTypeDao" >
+  <resultMap id="BaseResultMap" type="com.entity.Musictype" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="musictype" property="musictype" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, musictype
+  </sql>
+
+  <select id="selectAllMusicType" resultMap="BaseResultMap">
+      SELECT * FROM musictype ORDER BY RAND() LIMIT 4
+  </select>
+
+  <select id="selectAllMusicType2" resultMap="BaseResultMap">
+    SELECT * FROM musictype
+  </select>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select * from musictype
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectImageByMusicType" resultMap="BaseResultMap" parameterType="java.lang.String">
+      SELECT * FROM musictype WHERE musictype =  #{musictype,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from musictype
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.entity.Musictype" >
+    insert into musictype (id, musictype)
+    values (#{id,jdbcType=INTEGER}, #{musictype,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.entity.Musictype" >
+    insert into musictype
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="musictype != null" >
+        musictype,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="musictype != null" >
+        #{musictype,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.entity.Musictype" >
+    update musictype
+    <set >
+      <if test="musictype != null" >
+        musictype = #{musictype,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.entity.Musictype" >
+    update musictype
+    set musictype = #{musictype,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
